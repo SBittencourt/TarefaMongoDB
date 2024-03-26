@@ -9,7 +9,7 @@ global db
 db = client.mercadolivre
 
 def delete_usuario(nome, sobrenome):
-    #Delete
+    #Deletando o usuario
     global db
     mycol = db.usuario
     myquery = {"nome": nome, "sobrenome":sobrenome}
@@ -17,7 +17,7 @@ def delete_usuario(nome, sobrenome):
     print("Deletado o usuário ",mydoc)
 
 def create_usuario():
-    #Insert
+    #Inserindo o usuário
     global db
     mycol = db.usuario
     print("\nInserindo um novo usuário")
@@ -33,7 +33,7 @@ def create_usuario():
         cidade = input("Cidade: ")
         estado = input("Estado: ")
         cep = input("CEP: ")
-        endereco = {        #isso nao eh json, isso é chave-valor, eh um obj
+        endereco = {       
             "rua":rua,
             "num": num,
             "bairro": bairro,
@@ -90,6 +90,8 @@ while (key != 'S'):
     print("1-CRUD Usuário")
     print("2-CRUD Vendedor")
     print("3-CRUD Produto")
+    print("4-CRUD Compras")
+    print("5-CRUD Favoritos")
     key = input("Digite a opção desejada? (S para sair) ")
 
     if (key == '1'):
