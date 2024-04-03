@@ -3,7 +3,6 @@ from pymongo.server_api import ServerApi
 
 uri = "mongodb+srv://silmara:123@cluster0.05p7qyc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
-# Create a new client and connect to the server
 client = MongoClient(uri, server_api=ServerApi('1'))
 global db
 db = client.mercadolivre
@@ -21,7 +20,7 @@ def create_usuario():
     global db
     mycol = db.usuario
     print("\nInserindo um novo usuário")
-    nome = input("Nome: ")
+    nomeUsuario = input("Nome: ")
     sobrenome = input("Sobrenome: ")
     cpf = input("CPF: ")
     key = 1
@@ -43,35 +42,35 @@ def create_usuario():
         }
         end.append(endereco) #estou inserindo na lista
         key = input("Deseja cadastrar um novo endereço (S/N)? ")
-    mydoc = { "nome": nome, "sobrenome": sobrenome, "cpf": cpf, "end": end }
+    mydoc = { "nome": nomeUsuario, "sobrenome": sobrenome, "cpf": cpf, "end": end }
     x = mycol.insert_one(mydoc)
     print("Documento inserido com ID ",x.inserted_id)
 
-def read_usuario(nome):
+def read_usuario(nomeUsuario):
     #Read
     global db
     mycol = db.usuario
     print("Usuários existentes: ")
-    if not len(nome):
+    if not len(nomeUsuario):
         mydoc = mycol.find().sort("nome")
         for x in mydoc:
             print(x["nome"],x["cpf"])
     else:
-        myquery = {"nome": nome}
+        myquery = {"nome": nomeUsuario}
         mydoc = mycol.find(myquery)
         for x in mydoc:
             print(x)
 
-def update_usuario(nome):
+def update_usuario(nomeUsuario):
     #Read
     global db
     mycol = db.usuario
-    myquery = {"nome": nome}
+    myquery = {"nome": nomeUsuario}
     mydoc = mycol.find_one(myquery)
     print("Dados do usuário: ",mydoc)
     nome = input("Mudar Nome:")
     if len(nome):
-        mydoc["nome"] = nome
+        mydoc["nome"] = nomeUsuario
 
     sobrenome = input("Mudar Sobrenome:")
     if len(sobrenome):
@@ -83,45 +82,5 @@ def update_usuario(nome):
 
     newvalues = { "$set": mydoc }
     mycol.update_one(myquery, newvalues)
+      
 
-key = 0
-sub = 0
-while (key != 'S'):
-    print("1-CRUD Usuário")
-    print("2-CRUD Vendedor")
-    print("3-CRUD Produto")
-    print("4-CRUD Compras")
-    print("5-CRUD Favoritos")
-    key = input("Digite a opção desejada? (S para sair) ")
-
-    if (key == '1'):
-        print("Menu do Usuário")
-        print("1-Create Usuário")
-        print("2-Read Usuário")
-        print("3-Update Usuário")
-        print("4-Delete Usuário")
-        sub = input("Digite a opção desejada? (V para voltar) ")
-        if (sub == '1'):
-            print("Create usuario")
-            create_usuario()
-            
-        elif (sub == '2'):
-            nome = input("Read usuário, deseja algum nome especifico? ")
-            read_usuario(nome)
-        
-        elif (sub == '3'):
-            nome = input("Update usuário, deseja algum nome especifico? ")
-            update_usuario(nome)
-
-        elif (sub == '4'):
-            print("delete usuario")
-            nome = input("Nome a ser deletado: ")
-            sobrenome = input("Sobrenome a ser deletado: ")
-            delete_usuario(nome, sobrenome)
-            
-    elif (key == '2'):
-        print("Menu do Vendedor")        
-    elif (key == '3'):
-        print("Menu do Produto")        
-
-print("Tchau Prof...")
