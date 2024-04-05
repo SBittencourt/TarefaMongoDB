@@ -8,7 +8,6 @@ global db
 db = client.mercadolivre
 
 def delete_usuario(nome, sobrenome):
-    #Deletando o usuario
     global db
     mycol = db.usuario
     myquery = {"nome": nome, "sobrenome":sobrenome}
@@ -16,7 +15,6 @@ def delete_usuario(nome, sobrenome):
     print("Deletado o usuário ",mydoc)
 
 def create_usuario():
-    #Inserindo o usuário
     global db
     mycol = db.usuario
     print("\nInserindo um novo usuário")
@@ -40,14 +38,13 @@ def create_usuario():
             "estado": estado,
             "cep": cep
         }
-        end.append(endereco) #estou inserindo na lista
+        end.append(endereco) 
         key = input("Deseja cadastrar um novo endereço (S/N)? ")
     mydoc = { "nome": nomeUsuario, "sobrenome": sobrenome, "cpf": cpf, "end": end }
     x = mycol.insert_one(mydoc)
     print("Documento inserido com ID ",x.inserted_id)
 
 def read_usuario(nomeUsuario):
-    #Read
     global db
     mycol = db.usuario
     print("Usuários existentes: ")
@@ -62,7 +59,6 @@ def read_usuario(nomeUsuario):
             print(x)
 
 def update_usuario(nomeUsuario):
-    #Read
     global db
     mycol = db.usuario
     myquery = {"nome": nomeUsuario}
