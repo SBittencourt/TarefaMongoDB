@@ -16,11 +16,11 @@ db = client.mercadolivre
 key = 0
 sub = 0
 while (key != 'S'):
-    print("1-CRUD Usuário")
-    print("2-CRUD Vendedor")
-    print("3-CRUD Produto")
-    print("4-CRUD Compras")
-    print("5-CRUD Favoritos")
+    print("1 - CRUD Usuário")
+    print("2 - CRUD Vendedor")
+    print("3 - CRUD Produto")
+    print("4 - Compras")
+    print("5 - Favoritos")
     key = input("Digite a opção desejada? (S para sair) ")
 
     if (key == '1'):
@@ -138,7 +138,3 @@ while (key != 'S'):
         elif (sub == '3'):
             cpf_usuario = input("Digite o CPF do usuário: ")
             crud_favoritos.excluir_favorito(cpf_usuario)
-
-
-
-print("Tchau, tchau!")
