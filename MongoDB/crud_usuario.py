@@ -40,7 +40,7 @@ def create_usuario():
         }
         end.append(endereco) 
         key = input("Deseja cadastrar um novo endereço (S/N)? ")
-    mydoc = { "nome": nomeUsuario, "sobrenome": sobrenome, "cpf": cpf, "end": end }
+    mydoc = { "nome": nomeUsuario, "sobrenome": sobrenome, "cpf": cpf, "end": end, "favorito": [] }
     x = mycol.insert_one(mydoc)
     print("Documento inserido com ID ",x.inserted_id)
 

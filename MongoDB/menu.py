@@ -95,6 +95,30 @@ while (key != 'S'):
             crud_produto.delete_produto(nomeProduto)
 
 
+    elif (key == '4'):
+            print("Compras") 
+            print("1 - Adicionar no carrinho")
+            print("2 - Visualizar carrinho")
+            print("3 - Editar carrinho")
+            print("4 - Concluir compra")
+            sub = input("Digite a opção desejada? (V para voltar) ")
+            if (sub == '1'):
+                cpf_usuario = input("Digite o CPF do usuário: ")
+                crud_compras.adicionar_carrinho(cpf_usuario)
+    
+            elif (sub == '2'):
+                cpf_usuario = input("Digite o CPF do usuário: ")
+                crud_compras.visualizar_carrinho(cpf_usuario)
+
+            elif (sub == '3'):
+                cpf_usuario = input("Digite o CPF do usuário: ")
+                crud_compras.editar_carrinho(cpf_usuario)
+    
+            elif (sub == '4'):
+                cpf_usuario = input("Digite o CPF do usuário: ")
+                crud_compras.concluir_compra(cpf_usuario)
+
+
     elif (key == '5'):
         print("Realizar compra") 
         print("1 - Adicionar favoritos")
@@ -103,7 +127,9 @@ while (key != 'S'):
         sub = input("Digite a opção desejada? (V para voltar) ")
 
         if (sub == '1'):
-            crud_favoritos.adicionarnovo_favorito()
+            cpf_usuario = input("Digite o CPF do usuário: ")
+            carrinho = crud_compras.adicionar_carrinho(cpf_usuario)
+
         
         elif (sub == '2'):
             cpf_usuario = input("Digite o CPF do usuário: ")
@@ -111,8 +137,8 @@ while (key != 'S'):
     
         elif (sub == '3'):
             cpf_usuario = input("Digite o CPF do usuário: ")
-            id_produto = input("Digite o ID do produto que deseja remover dos favoritos: ")
-            crud_favoritos.excluir_favorito(cpf_usuario, id_produto)
+            crud_favoritos.excluir_favorito(cpf_usuario)
+
 
 
 print("Tchau, tchau!")

@@ -41,12 +41,46 @@ def visualizar_favoritos(cpf_usuario):
         else:
             print("Produto não encontrado para o favorito com ID:", favorito["_id"])
 
-def excluir_favorito(cpf_usuario, id_produto):
+def excluir_favorito(cpf_usuario):
     global db
     mycol = db.favoritos
-    myquery = {"cpf_usuario": cpf_usuario, "id_produto": id_produto}
-    mydoc = mycol.delete_one(myquery)
-    print("Produto removido dos favoritos do usuário com sucesso!")
+    myquery = {"cpf_usuario": cpf_usuario}
+    favoritos = list(mycol.find(myquery))
+
+    if favoritos:
+        print("Favoritos do usuário:")
+        for i, favorito in enumerate(favoritos, start=1):
+            produto = db.produto.find_one({"_id": favorito["id_produto"]})
+            if produto:
+                vendedor = db.vendedor.find_one({"cpf": produto.get("vendedor")})
+                if vendedor:
+                    print(f"{i} - Nome do Produto: {produto['nome']} | Preço: {produto['preço']} | Vendedor: {vendedor['nome']}")
+                else:
+                    print(f"{i} - Nome do Produto: {produto['nome']} | Preço: {produto['preço']} | Vendedor: Não disponível")
+            else:
+                print(f"{i} - Produto não encontrado para o favorito com ID: {favorito['id_produto']}")
+
+        while True:
+            try:
+                indice = int(input("Digite o número do favorito que deseja excluir (ou '0' para cancelar): "))
+                if indice == 0:
+                    print("Operação cancelada.")
+                    return
+                elif 1 <= indice <= len(favoritos):
+                    break
+                else:
+                    print("Número de favorito inválido. Digite um número válido.")
+            except ValueError:
+                print("Entrada inválida. Digite um número válido.")
+
+        favorito_selecionado = favoritos[indice - 1]
+        mycol.delete_one(favorito_selecionado)
+        print("Favorito removido com sucesso!")
+    else:
+        print("O usuário não possui favoritos.")
+
+
+
 
 def listar_produtos():
     global db
