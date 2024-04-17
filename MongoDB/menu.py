@@ -4,6 +4,8 @@ from pymongo.server_api import ServerApi
 import crud_usuario
 import crud_produto
 import crud_vendedor
+import crud_compras
+import crud_favoritos
 
 key = 0
 sub = 0
@@ -92,4 +94,25 @@ while (key != 'S'):
             nomeProduto = input("Nome a ser deletado: ")
             crud_produto.delete_produto(nomeProduto)
 
-print("Tchau Prof...")
+
+    elif (key == '5'):
+        print("Realizar compra") 
+        print("1 - Adicionar favoritos")
+        print("2 - Visualizar favoritos")
+        print("3 - Deletar favoritos")
+        sub = input("Digite a opção desejada? (V para voltar) ")
+
+        if (sub == '1'):
+            crud_favoritos.adicionarnovo_favorito()
+        
+        elif (sub == '2'):
+            cpf_usuario = input("Digite o CPF do usuário: ")
+            crud_favoritos.visualizar_favoritos(cpf_usuario)
+    
+        elif (sub == '3'):
+            cpf_usuario = input("Digite o CPF do usuário: ")
+            id_produto = input("Digite o ID do produto que deseja remover dos favoritos: ")
+            crud_favoritos.excluir_favorito(cpf_usuario, id_produto)
+
+
+print("Tchau, tchau!")
