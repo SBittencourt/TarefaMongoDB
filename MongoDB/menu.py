@@ -118,23 +118,26 @@ while (key != 'S'):
             print("Opção inválida. Por favor, digite uma opção válida.")
 
 
-
     elif (key == '5'):
-        print("Realizar compra") 
-        print("1 - Adicionar favoritos")
-        print("2 - Visualizar favoritos")
-        print("3 - Deletar favoritos")
-        sub = input("Digite a opção desejada? (V para voltar) ")
+            print("Favoritos") 
+            print("1 - Adicionar favoritos")
+            print("2 - Visualizar favoritos")
+            print("3 - Deletar favoritos")
+            sub = input("Digite a opção desejada? (V para voltar) ")
 
-        if (sub == '1'):
-            cpf_usuario = input("Digite o CPF do usuário: ")
-            carrinho = crud_compras.adicionar_carrinho(cpf_usuario)
+            if (sub == '1'):
+                crud_favoritos.adicionarnovo_favorito()
 
-        
-        elif (sub == '2'):
-            cpf_usuario = input("Digite o CPF do usuário: ")
-            crud_favoritos.visualizar_favoritos(cpf_usuario)
-    
-        elif (sub == '3'):
-            cpf_usuario = input("Digite o CPF do usuário: ")
-            crud_favoritos.excluir_favorito(cpf_usuario)
+            elif (sub == '2'):
+                cpf_usuario = input("Digite o CPF do usuário: ")
+                crud_favoritos.visualizar_favoritos(cpf_usuario)
+
+            elif (sub == '3'):
+                cpf_usuario = input("Digite o CPF do usuário: ")
+                id_produto = input("Digite o ID do produto que deseja remover dos favoritos: ")
+                crud_favoritos.excluir_favorito(cpf_usuario, id_produto)
+
+            else:
+                print("Opção inválida. Por favor, digite uma opção válida.")
+
+print("Tchau, tchau! Volte sempre!")
