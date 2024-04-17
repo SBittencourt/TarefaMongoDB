@@ -8,9 +8,11 @@ client = MongoClient(uri, server_api=ServerApi('1'))
 global db
 db = client.mercadolivre
 
-def listar_produtos():
+def realizar_compra(cpf_usuario):
     global db
-    print("Lista de produtos:")
+    carrinho = []
+
+    print("Lista de produtos disponíveis:")
     produtos = list(db.produto.find())
     for i, produto in enumerate(produtos, start=1):
         vendedor = db.vendedor.find_one({"cpf": produto.get("vendedor")})
@@ -19,21 +21,13 @@ def listar_produtos():
         else:
             print(f"{i} - ID: {produto['_id']} | Produto: {produto['nome']} | Vendedor: Não disponível | Preço: {produto['preço']}")
 
-
-def adicionar_carrinho(cpf_usuario):
-    global db
-    carrinho = []
     while True:
-        print("\nLista de produtos disponíveis:")
-        listar_produtos()
-
         id_produto = input("\nDigite o número do produto que deseja adicionar ao carrinho (ou 'C' para concluir): ")
         if id_produto.upper() == 'C':
             break
 
         try:
             id_produto = int(id_produto)
-            produtos = list(db.produto.find())
             if id_produto < 1 or id_produto > len(produtos):
                 raise ValueError
             produto = produtos[id_produto - 1]
@@ -44,81 +38,70 @@ def adicionar_carrinho(cpf_usuario):
 
     if not carrinho:
         print("Carrinho vazio. Operação cancelada.")
-    
-    return carrinho
-
-
-def visualizar_carrinho(carrinho):
-    if not carrinho:
-        print("Carrinho vazio.")
         return
-    
-    print("\nProdutos no carrinho:")
-    total = 0
-    for i, produto in enumerate(carrinho, start=1):
-        if isinstance(produto, dict):  # Verificar se produto é um dicionário
-            total += produto.get("preço", 0)  # Usar get para acessar o preço do produto
-            print(f"{i} - Nome do Produto: {produto.get('nome')} | Preço: {produto.get('preço')}")
-        else:
-            print("Erro: Produto inválido encontrado no carrinho.")
-    
-    print("\nTotal a pagar:", total)
+        
+    total = sum(float(produto["preço"]) for produto in carrinho)
 
+    # Mostra o valor total ao usuário
+    print(f"\nValor total do carrinho: R${total:.2f}")
 
+    # Pede confirmação antes de finalizar a compra
+    confirmar = input("\nDeseja confirmar a compra (S/N)? ").upper()
+    if confirmar != "S":
+        print("Compra cancelada.")
+        return carrinho
 
-def editar_carrinho(carrinho):
-    if not carrinho:
-        print("Carrinho vazio. Não há itens para editar.")
-        return
-
-    while True:
-        print("\nOpções de edição:")
-        print("1 - Remover produto do carrinho")
-        print("2 - Voltar")
-
-        opcao = input("Digite a opção desejada: ")
-
-        if opcao == '1':
-            visualizar_carrinho(carrinho)
-            indice = input("Digite o número do produto que deseja remover (ou 'V' para voltar): ")
-            if indice.upper() == 'V':
-                break
-
+    usuario = db.usuario.find_one({"cpf": cpf_usuario})
+    if usuario:
+        enderecos = usuario.get("end", [])
+        print("\nSelecione o endereço de entrega:")
+        for i, endereco in enumerate(enderecos, start=1):
+            print(f"{i} - {endereco['rua']}, {endereco['num']}, {endereco['bairro']}, {endereco['cidade']}, {endereco['estado']}, CEP: {endereco['cep']}")
+        
+        while True:
+            endereco_selecionado = input("Digite o número do endereço selecionado: ")
             try:
-                indice = int(indice)
-                if 1 <= indice <= len(carrinho):
-                    carrinho.pop(indice - 1)
-                    print("Produto removido do carrinho com sucesso.")
+                endereco_selecionado = int(endereco_selecionado)
+                if 1 <= endereco_selecionado <= len(enderecos):
+                    endereco_entrega = enderecos[endereco_selecionado - 1]
+                    print("Endereço selecionado para entrega:")
+                    print(f"{endereco_entrega['rua']}, {endereco_entrega['num']}, {endereco_entrega['bairro']}, {endereco_entrega['cidade']}, {endereco_entrega['estado']}, CEP: {endereco_entrega['cep']}")
+                    
+                    # Inserir a compra no banco de dados
+                    compra = {
+                        "cpf_usuario": cpf_usuario,
+                        "produtos": carrinho,
+                        "endereco_entrega": endereco_entrega,
+                        "valor_total": total
+                    }
+                    db.compras.insert_one(compra)
+                    
+                    print("Compra concluída com sucesso!")
+                    return carrinho
                 else:
-                    print("Número de produto inválido.")
+                    print("Número de endereço inválido.")
             except ValueError:
                 print("Entrada inválida. Digite um número válido.")
+    else:
+        print("Usuário não encontrado. Não é possível continuar com a compra.")
+        return carrinho
 
-        elif opcao == '2':
-            break
-        else:
-            print("Opção inválida. Digite '1' para remover um produto ou '2' para voltar.")
+def ver_compras_realizadas(cpf_usuario):
+    global db
+    print("Compras realizadas pelo usuário:")
+    
+    compras_realizadas = db.compras.find({"cpf_usuario": cpf_usuario})
+    
+    count = 0
 
-def concluir_compra(cpf_usuario, carrinho):
-    if not carrinho:
-        print("Carrinho vazio. Não é possível concluir a compra.")
-        return
-
-    print("\nProdutos no carrinho:")
-    total = 0
-    for i, produto in enumerate(carrinho, start=1):
-        total += produto["preço"]
-        print(f"{i} - Nome do Produto: {produto['nome']} | Preço: {produto['preço']}")
-
-    print("\nTotal a pagar:", total)
-
-    while True:
-        confirmar = input("Deseja confirmar a compra (S/N)? ").upper()
-        if confirmar == "S":
-            print("Compra concluída com sucesso!")
-            return carrinho
-        elif confirmar == "N":
-            print("Compra cancelada.")
-            return carrinho
-        else:
-            print("Opção inválida. Por favor, digite 'S' para confirmar ou 'N' para cancelar.")
+    for compra in compras_realizadas:
+        count += 1
+        print(f"ID da Compra: {compra['_id']}")
+        print("Produtos:")
+        for produto in compra['produtos']:
+            print(f"   Nome do Produto: {produto['nome']} | Preço: {produto['preço']}")
+        print(f"Endereço de Entrega: {compra['endereco_entrega']}")
+        print("----")
+    
+    if count == 0:
+        print("Nenhuma compra encontrada para este usuário.")

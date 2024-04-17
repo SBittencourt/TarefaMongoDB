@@ -7,6 +7,12 @@ import crud_vendedor
 import crud_compras
 import crud_favoritos
 
+uri = "mongodb+srv://silmara:123@cluster0.05p7qyc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+
+client = MongoClient(uri, server_api=ServerApi('1'))
+global db
+db = client.mercadolivre
+
 key = 0
 sub = 0
 while (key != 'S'):
@@ -95,28 +101,22 @@ while (key != 'S'):
             crud_produto.delete_produto(nomeProduto)
 
 
-    elif (key == '4'):
-            print("Compras") 
-            print("1 - Adicionar no carrinho")
-            print("2 - Visualizar carrinho")
-            print("3 - Editar carrinho")
-            print("4 - Concluir compra")
-            sub = input("Digite a opção desejada? (V para voltar) ")
-            if (sub == '1'):
-                cpf_usuario = input("Digite o CPF do usuário: ")
-                crud_compras.adicionar_carrinho(cpf_usuario)
-    
-            elif (sub == '2'):
-                cpf_usuario = input("Digite o CPF do usuário: ")
-                crud_compras.visualizar_carrinho(cpf_usuario)
+    elif key == '4':
+        print("Compras") 
+        print("1 - Realizar compra")
+        print("2 - Ver compras realizadas")
+        sub = input("Digite a opção desejada? (V para voltar) ")
 
-            elif (sub == '3'):
-                cpf_usuario = input("Digite o CPF do usuário: ")
-                crud_compras.editar_carrinho(cpf_usuario)
-    
-            elif (sub == '4'):
-                cpf_usuario = input("Digite o CPF do usuário: ")
-                crud_compras.concluir_compra(cpf_usuario)
+        if sub == '1':
+            cpf_usuario = input("Digite o CPF do usuário: ")
+            carrinho_usuario = crud_compras.realizar_compra(cpf_usuario)
+              
+        elif sub == '2':
+            cpf_usuario = input("Digite o CPF do usuário: ")
+            crud_compras.ver_compras_realizadas(cpf_usuario)
+        else:
+            print("Opção inválida. Por favor, digite uma opção válida.")
+
 
 
     elif (key == '5'):
