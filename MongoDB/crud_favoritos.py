@@ -124,4 +124,25 @@ def adicionarnovo_favorito():
         if adicionar_mais != "S":
             break
 
+def adicionar_favorito(cpf_usuario, id_produto):
+    global db
+    usuario_collection = db.usuario
+    favoritos_collection = db.favoritos
+
+    usuario = usuario_collection.find_one({"cpf": cpf_usuario})
+    if not usuario:
+        print("Erro: Usuário não encontrado.")
+        return
+
+    # Adiciona o favorito à coleção de favoritos
+    favorito = {"cpf_usuario": cpf_usuario, "id_produto": id_produto}
+    favoritos_collection.insert_one(favorito)
+    print("Produto adicionado aos favoritos do usuário com sucesso!")
+
+    # Atualiza o documento do usuário com o novo favorito
+    usuario_collection.update_one(
+        {"cpf": cpf_usuario},
+        {"$push": {"favorito": id_produto}}
+    )
+
 

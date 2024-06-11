@@ -25,9 +25,9 @@ def create_usuario():
     telefone = input("Telefone: ")
     email = input("Email: ")
     cpf = input("CPF: ")
-    key = 1
+    key = 'S'  
     end = []
-    while (key != 'N'):
+    while key.upper() != 'N':  
         rua = input("Rua: ")
         num = input("Num: ")
         bairro = input("Bairro: ")
@@ -43,12 +43,12 @@ def create_usuario():
             "cep": cep
         }
         end.append(endereco) 
-        key = input("Deseja cadastrar um novo endereço (S/N)? ")
+        key = input("Deseja cadastrar um novo endereço (S/N)? ").upper()  
     mydoc = { "nome": nomeUsuario, "sobrenome": sobrenome, "cpf": cpf, "end": end, "favorito": [] }
     x = mycol.insert_one(mydoc)
     print("Documento inserido com ID ",x.inserted_id)
 
-# Outros códigos para o read_usuario funcionar corretamente
+
 
 def visualizar_favoritos(cpf_usuario):
     global db
